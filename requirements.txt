@@ -1,0 +1,11 @@
+torch
+# built with 
+#torch==1.9.0
+
+torchvision
+#built with 
+#torchvision==0.10.0
+
+timm
+#built with 
+#timm==0.4.12
