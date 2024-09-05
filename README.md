@@ -1,4 +1,4 @@
-# Imgage Recongntion Trainer
+# Image Recognition Trainer
 ### Trains a resnet50 base model to provide a confidence score of an supplied image across 7 classes.
 
 * Tree structure for training images
@@ -10,7 +10,15 @@
   ├── base
   │   ├── train
   │   │   ├── class1
+  |   |   |     ├── image_1.jpg
+  |   |   |     ├── image_2.jpg
+  |   |   |     |    ...
+  |   |   |     └── image_n.jpg
   │   │   ├── class2
+  |   |   |     ├── image_1.jpg
+  |   |   |     ├── image_2.jpg
+  |   |   |     |    ...
+  |   |   |     └── image_n.jpg
   │   │   ├── class3
   │   │   ├── class4
   │   │   ├── class5
@@ -18,6 +26,10 @@
   │   │   └── class7
   │   └── val
   │       ├── class1
+  |       |     ├── image_1.jpg
+  |       |     ├── image_2.jpg
+  |       |     |    ...
+  |       |     └── image_n.jpg
   │       ├── class2
   │       ├── class3
   │       ├── class4
