@@ -1,0 +1,4 @@
+/animals/
+resnet50_best.pth.tar
+./*.tar
+/run/

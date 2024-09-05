@@ -3,8 +3,10 @@ import timm
 import torch
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
+from torch.utils.tensorboard import SummaryWriter
 from multiprocessing import freeze_support  # Import freeze_support
 from torch.optim.lr_scheduler import StepLR
+
 
 # Function to save checkpoint
 def save_checkpoint(state, filename="checkpoint.pth.tar"):
@@ -17,23 +19,27 @@ def main():
         transforms.ToTensor(),          # Convert images to PyTorch tensors
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # ```Normalize with ImageNet mean and std
     ])
-
+ 
     # Step 2: Load the datasets
     train_dataset = datasets.ImageFolder(root='./animals/base/train', transform=transform )
     train_dataset.class_to_idx = {'Duiker': 0, 'Leopard': 1, 'Lion': 2, 'WildDog': 3, 'Hyena': 4, 'WartHog': 5, 'Jackal': 6}
 
     val_dataset = datasets.ImageFolder(root='./animals/base/val', transform=transform)
     val_dataset.class_to_idx = {'Duiker': 0, 'Leopard': 1, 'Lion': 2, 'WildDog': 3, 'Hyena': 4, 'WartHog': 5, 'Jackal': 6}
+   
     # Step 3: Create data loaders
     train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, num_workers=4)
     val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False, num_workers=4)
 
+    #3.5 tensorboard 
+    #writer = SummaryWriter('tensorlog/',comment="",purge_step=None,max_queue=10,flush_secs=120,filename_suffix="anderdad_")
+    
     # Step 4: Load the model
     checkpoint_path = "./resnet50_best.pth.tar"
     if os.path.exists(checkpoint_path):
         model = timm.create_model(
             'resnet50', 
-            pretrained=False,
+            pretrained=True,
             num_classes=7,
             checkpoint_path=checkpoint_path
         )
@@ -41,15 +47,16 @@ def main():
     else:
         model = timm.create_model(
             'resnet50', 
-            pretrained=False,  
+            pretrained=True,  
             num_classes=7,
         )
         print("No checkpoint found, initialized model base models ## No pretrained weights")
 
     # Step 5: Set up the training loop
     criterion = torch.nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
-    scheduler = StepLR(optimizer, step_size=5, gamma=0.1)  # Reduce LR by a factor of 0.1 every 5 epochs
+    optimizer = torch.optim.RMSprop(model.parameters(),lr=0.0001)
+    #optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
+    scheduler = StepLR(optimizer, step_size=5, gamma=0.01)  # Reduce LR by a factor of 0.1 every 5 epochs
 
     # Move model to GPU if available
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -68,7 +75,7 @@ def main():
             loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
-            
+            #writer.add_scalar("Loss/train", loss, epoch)
             running_loss += loss.item()
             
             # Print loss for every 10 batches
@@ -100,6 +107,10 @@ def main():
                 _, predicted = torch.max(outputs, 1)
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
+                #writer.add_scalar("Loss/validate", loss, epoch)
+                #writer.add_scalar("Validation_loss/Accuracy",
+                #                (val_loss/len(val_loader)),
+                #                100 * (correct / total))
         
         print(f"Validation Loss: {val_loss/len(val_loader)}, Accuracy: {100 * correct / total}%")
           
@@ -113,6 +124,9 @@ def main():
 
         # Step the scheduler    
         scheduler.step()
+    #writer.Save('tensorout')
+    #writer.close()
+    
 
 if __name__ == '__main__':
     freeze_support()
