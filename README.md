@@ -27,7 +27,7 @@
   └── build_model.py
 ```
 
-# Class names need to align with the code in Step 2.
+### Class names need to align with the code in Step 2.
 ### For Example: I was attempting to train against 7 African Animal Species 
 
 
