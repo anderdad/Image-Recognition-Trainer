@@ -1,8 +1,32 @@
 import os
 import torch
 import timm
+import json
+
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
+
+
+train_path = ""
+val_path = ""
+classes = []
+
+with open('config.json') as f:
+    data = json.load(f)
+    train_path = data['relative_training_path']
+    val_path = data['relative_validation_path']
+    classes = data['classes']    
+
+# Function to create class to index mapping
+def idx_json():
+    idx = {}
+    c = 0
+    for i in classes.split(","):
+        idx[i] = c
+        c+=1  
+        
+    return idx
+
 
 def save_predictions(model, dataloader, device, output_file):
     model.eval()
@@ -31,8 +55,10 @@ def main():
     ])
 
     # Step 2: Load the datasets
-    dataset = datasets.ImageFolder(root='./animals/base/val', transform=transform)
-    dataset.class_to_idx = {'Duiker': 0, 'Leopard': 1, 'Lion': 2, 'WildDog': 3, 'Hyena': 4, 'WartHog': 5, 'Jackal': 6}
+    idx = idx_json()
+    dataset = datasets.ImageFolder(root=val_path, transform=transform)
+    dataset.class_to_idx = idx
+    #dataset.class_to_idx = {'Duiker': 0, 'Leopard': 1, 'Lion': 2, 'WildDog': 3, 'Hyena': 4, 'WartHog': 5, 'Jackal': 6}
 
     # Step 3: Create data loader
     dataloader = DataLoader(dataset, batch_size=32, shuffle=False, num_workers=4)
@@ -43,7 +69,7 @@ def main():
         model = timm.create_model(
             'resnet50', 
             pretrained=False,
-            num_classes=7,
+            num_classes= len(idx),
             checkpoint_path=checkpoint_path
         )
         print(f"Loaded model from checkpoint: {checkpoint_path}")
