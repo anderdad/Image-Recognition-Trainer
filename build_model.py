@@ -21,8 +21,11 @@ with open('config.json') as f:
 # Function to create class to index mapping
 def idx_json():
     idx = {}
-    for c in classes:
-        idx.append({c: classes.index(c)})
+    c = 0
+    for i in classes.split(","):
+        idx[i] = c
+        c+=1  
+        
     return idx
               
 # Function to save checkpoint

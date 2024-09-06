@@ -76,3 +76,17 @@
     ├── WartHog
     └── WildDog
 ```
+
+# V1.1
+### Ok. so we're all learning.... ;)
+* model checkpoint saving a dataset does not make
+* have added generateDS.py to load the checkpoint model and output the dataset
+* * once you are happy with your checkpoint model run ```python.exe .\create.py ```
+* * this will load the ```resnet50_best.pth.tar``` checkpoint and give you the option to: 
+```python create.py final_model --checkpoint resnet50_checkpoint.pth```  to load your tuned checkpoint and build the model 
+* or 
+```python generateDS.py predict --checkpoint resnet50_checkpoint.pth``` to run preditions against the model with your validation set 
+
+# for extensibility 
+* added ```config.json``` to make it easier to customize the script to your own needs
+* * (still need to make sure the classes string numbers and entries match the folders)
