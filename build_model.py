@@ -41,9 +41,6 @@ def main():
     ])
 
     # Step 2: Load the datasets
-    #train_dataset = datasets.ImageFolder(root='./animals/base/train', transform=transform )
-    #train_dataset.class_to_idx = {'Duiker': 0, 'Leopard': 1, 'Lion': 2, 'WildDog': 3, 'Hyena': 4, 'WartHog': 5, 'Jackal': 6}
-
     train_dataset = datasets.ImageFolder(root=train_path, transform=transform)
     train_dataset.class_to_idx = idx_json()
 
@@ -51,10 +48,6 @@ def main():
     val_dataset = datasets.ImageFolder(root=val_path, transform=transform)
     val_dataset.class_to_idx = idx_json()
     
-    
-    #val_dataset = datasets.ImageFolder(root='./animals/base/val', transform=transform)
-    #val_dataset.class_to_idx = {'Duiker': 0, 'Leopard': 1, 'Lion': 2, 'WildDog': 3, 'Hyena': 4, 'WartHog': 5, 'Jackal': 6}
-   
     # Step 3: Create data loaders
     train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, num_workers=4)
     val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False, num_workers=4)

@@ -75,7 +75,9 @@ def main():
 
     if args.mode == 'final_model':
         # Save the final trained model
-        torch.save(model.state_dict(), "final_model.pth")
+        torch.save(model, "complete_model.pth") 
+        #save the state_dict incase you need it.
+        torch.save(model.state_dict(), "final_model_state_dict.pth")
         print("Final model saved to final_model.pth")
     else:
         # Load the model from checkpoint
