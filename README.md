@@ -97,6 +97,6 @@
 * run the ```predict.py``` to run inference on the model
 * ``` parser.add_argument('--image_path', type=str, default='img/', help="Folder path to the image to be evaluated")```
 * ```parser.add_argument('--model_path', type=str, default="complete_model.pth", help="Path to the trained model")```
-* image_path optional arg. relative path to an folder containt the images to run predictions against defaults to ```img/``` folder relative to where ```predict.py``` is 
-* model path relative path to folder / model that you need to run inference ... default to ```complete_model.pth``` in the filder  where ```predict.py``` is located.
+  * image_path optional arg. relative path to an folder containing the images to run predictions against. Defaults to ```img/``` folder relative to where ```predict.py``` is 
+  * relative path to folder / model that you need to run inference ... default to ```complete_model.pth``` in the filder  where ```predict.py``` is located.
     
