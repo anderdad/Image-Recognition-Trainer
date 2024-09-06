@@ -79,8 +79,8 @@
 
 # V1.1
 ## Ok. so we're all learning.... ;)
-### model checkpoint saving a dataset does not make!
-* Added generateDS.py to load the checkpoint model and output the dataset
+### model checkpoint saving a usable model does not make!
+* Added ```create.py``` to load the checkpoint model and output the dataset
 * Once you are happy with your checkpoint model run ```python.exe .\create.py ```  (arg requied)
 * This will load the ```resnet50_best.pth.tar``` :
 * args (or arrrgs if you're a pirate)
