@@ -92,3 +92,11 @@
 * added ```config.json``` to make it easier to customize the script to your own needs  
 
 * you still need to make sure the classes string numbers and entries match the folders
+# V1.2
+### ... well not much use without a prediction so added a predictor script.
+* run the ```predict.py``` to run inference on the model
+* ``` parser.add_argument('--image_path', type=str, default='img/', help="Folder path to the image to be evaluated")```
+* ```parser.add_argument('--model_path', type=str, default="complete_model.pth", help="Path to the trained model")```
+* image_path optional arg. relative path to an folder containt the images to run predictions against defaults to ```img/``` folder relative to where ```predict.py``` is 
+* model path relative path to folder / model that you need to run inference ... default to ```complete_model.pth``` in the filder  where ```predict.py``` is located.
+    
