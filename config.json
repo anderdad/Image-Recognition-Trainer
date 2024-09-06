@@ -1,0 +1,5 @@
+{
+    "relative_training_path": "./animals/base/train",
+    "relative_validation_path": "./animals/base/val",
+    "classes": "Duiker,Leopard,Lion,WildDog,Hyena,WartHog,Jackal"
+}

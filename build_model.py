@@ -1,11 +1,30 @@
 import os
 import timm
+import csv
+import json
 import torch
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 from multiprocessing import freeze_support  # Import freeze_support
 from torch.optim.lr_scheduler import StepLR
 
+train_path = ""
+val_path = ""
+classes = []
+
+with open('config.json') as f:
+    data = json.load(f)
+    train_path = data['relative_training_path']
+    val_path = data['relative_validation_path']
+    classes = data['classes']    
+
+# Function to create class to index mapping
+def idx_json():
+    idx = {}
+    for c in classes:
+        idx.append({c: classes.index(c)})
+    return idx
+              
 # Function to save checkpoint
 def save_checkpoint(state, filename="checkpoint.pth.tar"):
     torch.save(state, filename)
@@ -19,11 +38,20 @@ def main():
     ])
 
     # Step 2: Load the datasets
-    train_dataset = datasets.ImageFolder(root='./animals/base/train', transform=transform )
-    train_dataset.class_to_idx = {'Duiker': 0, 'Leopard': 1, 'Lion': 2, 'WildDog': 3, 'Hyena': 4, 'WartHog': 5, 'Jackal': 6}
+    #train_dataset = datasets.ImageFolder(root='./animals/base/train', transform=transform )
+    #train_dataset.class_to_idx = {'Duiker': 0, 'Leopard': 1, 'Lion': 2, 'WildDog': 3, 'Hyena': 4, 'WartHog': 5, 'Jackal': 6}
 
-    val_dataset = datasets.ImageFolder(root='./animals/base/val', transform=transform)
-    val_dataset.class_to_idx = {'Duiker': 0, 'Leopard': 1, 'Lion': 2, 'WildDog': 3, 'Hyena': 4, 'WartHog': 5, 'Jackal': 6}
+    train_dataset = datasets.ImageFolder(root=train_path, transform=transform)
+    train_dataset.class_to_idx = idx_json()
+
+
+    val_dataset = datasets.ImageFolder(root=val_path, transform=transform)
+    val_dataset.class_to_idx = idx_json()
+    
+    
+    #val_dataset = datasets.ImageFolder(root='./animals/base/val', transform=transform)
+    #val_dataset.class_to_idx = {'Duiker': 0, 'Leopard': 1, 'Lion': 2, 'WildDog': 3, 'Hyena': 4, 'WartHog': 5, 'Jackal': 6}
+   
     # Step 3: Create data loaders
     train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, num_workers=4)
     val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False, num_workers=4)
@@ -34,7 +62,7 @@ def main():
         model = timm.create_model(
             'resnet50', 
             pretrained=False,
-            num_classes=7,
+            num_classes= len(classes),
             checkpoint_path=checkpoint_path
         )
         print(f"Loaded model from checkpoint: {checkpoint_path}")
@@ -42,7 +70,7 @@ def main():
         model = timm.create_model(
             'resnet50', 
             pretrained=False,  
-            num_classes=7,
+            num_classes=len(classes)
         )
         print("No checkpoint found, initialized model base models ## No pretrained weights")
 
