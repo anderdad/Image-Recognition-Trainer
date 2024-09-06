@@ -68,7 +68,8 @@ def main():
     dataloader = DataLoader(dataset, batch_size=32, shuffle=True if args.mode == 'final_model' else False, num_workers=4)
 
     # Step 4: Load or initialize the model
-    model = timm.create_model('resnet50', pretrained=True, num_classes=len(classes))
+    idx= idx_json()
+    model = timm.create_model('resnet50', pretrained=True, num_classes=len(idx))
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
 
