@@ -32,7 +32,7 @@ def idx_json():
 def save_checkpoint(state, filename="checkpoint.pth.tar"):
     torch.save(state, filename)
 
-def main():
+def main(ttype):
     # Step 1: Define transformations
     transform = transforms.Compose([
         transforms.Resize((224, 224)),  # Resize images to 224x224
@@ -73,7 +73,12 @@ def main():
     # Step 5: Set up the training loop
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
-    scheduler = StepLR(optimizer, step_size=5, gamma=0.1)  # Reduce LR by a factor of 0.1 every 5 epochs
+    if type == 1:
+        scheduler = StepLR(optimizer, step_size=5, gamma=0.1)  # Reduce LR by a factor of 0.1 every 5 epochs
+    elif type == 2:
+        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=10)  # Cosine annealing
+    elif type == 3:
+        scheduler = torch.optim.lr_scheduler.CyclicLR(optimizer, base_lr=0.0001, max_lr=0.01)
 
     # Move model to GPU if available
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -138,6 +143,39 @@ def main():
         # Step the scheduler    
         scheduler.step()
 
-if __name__ == '__main__':
+def training_swicth():
+    # 1. Step LR
+    # 2. Cosine Annealing
+    # 3. Cyclic Learning Rates
+    # q. Quit
+    
+    while True:
+        print("Traing a Resent50 model over 30 epochs using the Adam optimizer")
+        print("Select the training type: ")
+        print("1. stepLR")
+        print("2. Cosine Annealing")
+        print("3. Cyclic Learning Rates")
+        print("q. Quit")
+        
+        choice = input()
+        
+        if choice == '1':
+            print("Training with Learning Rate Scheduling,  step every 5 epoch , gamma=0.1")
+            break
+        elif choice == '2':
+            print("Training with Cosine Annealing with a T MAX of 10")
+            break
+        elif choice == '3':
+            print("Training with Cyclic Learning Rates with base learning rate 0.0001, max =0.01")
+            break
+        elif choice == 'q':
+            print("Exiting program")
+            exit()
+        else:
+            print("Invalid choice. Please select 1, 2, 3 or (q) to quit")
+    return int(choice)
+        
+if __name__ == '__main__':  
+    ttype = training_swicth()
     freeze_support()
-    main()
+    main(ttype)
