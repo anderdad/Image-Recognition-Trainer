@@ -73,11 +73,11 @@ def main(ttype):
     # Step 5: Set up the training loop
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
-    if type == 1:
+    if ttype == 1:
         scheduler = StepLR(optimizer, step_size=5, gamma=0.1)  # Reduce LR by a factor of 0.1 every 5 epochs
-    elif type == 2:
+    elif ttype == 2:
         scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=10)  # Cosine annealing
-    elif type == 3:
+    elif ttype == 3:
         scheduler = torch.optim.lr_scheduler.CyclicLR(optimizer, base_lr=0.0001, max_lr=0.01)
 
     # Move model to GPU if available
