@@ -3,10 +3,11 @@ import timm
 import csv
 import json
 import torch
-from torchvision import datasets, transforms
+from torchvision import datasets, transforms, models
 from torch.utils.data import DataLoader
 from multiprocessing import freeze_support  # Import freeze_support
 from torch.optim.lr_scheduler import StepLR
+from torchvision.models import ResNet50_Weights
 
 train_path = ""
 val_path = ""
@@ -53,31 +54,53 @@ def main(ttype):
     val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False, num_workers=4)
 
     # Step 4: Load the model
-    checkpoint_path = "./resnet50_best.pth.tar"
-    if os.path.exists(checkpoint_path):
-        model = timm.create_model(
-            'resnet50', 
-            pretrained=False,
-            num_classes= len(classes),
-            checkpoint_path=checkpoint_path
-        )
-        print(f"Loaded model from checkpoint: {checkpoint_path}")
-    else:
-        model = timm.create_model(
-            'resnet50', 
-            pretrained=False,  
-            num_classes=len(classes)
-        )
-        print("No checkpoint found, initialized model base models ## No pretrained weights")
+    idx = idx_json()
+    # checkpoint_path = "./resnet50_best.pth.tar"
+    # if os.path.exists(checkpoint_path):
+    #     model = timm.create_model(
+    #         'resnet50', 
+    #         pretrained=False,
+    #         num_classes= len(idx),
+    #         checkpoint_path=checkpoint_path
+    #     )
+    #     print(f"Loaded model from checkpoint: {checkpoint_path}")
+    # else:
+    #     model = timm.create_model(
+    #         'resnet50', 
+    #         pretrained=False,  
+    #         num_classes=len(idx)
+    #     )
+    #     print("No checkpoint found, initialized model base models ## No pretrained weights")
+    ################### new ###########################
+        
+        # Load the ResNet50 model with pre-trained weights
+    model = models.resnet50(weights=ResNet50_Weights.IMAGENET1K_V2)
 
+    # Modify the final layer to match the number of classes in your dataset
+    num_classes = len(idx)  
+    model.fc = torch.nn.Linear(model.fc.in_features, num_classes)
+
+    # Print the model architecture (optional)
+    print(model)
+
+    # Now you can proceed with training the model
+    # Define your loss function, optimizer, and learning rate scheduler here
+    criterion = torch.nn.CrossEntropyLoss()
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
+
+    # Example learning rate scheduler (Step LR)
+    #scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=7, gamma=0.1)
+
+    ####################################################
     # Step 5: Set up the training loop
     criterion = torch.nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
+    #optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
     if ttype == 1:
-        scheduler = StepLR(optimizer, step_size=5, gamma=0.1)  # Reduce LR by a factor of 0.1 every 5 epochs
+        scheduler = StepLR(optimizer, step_size=7, gamma=0.01)  # Reduce LR by a factor of 0.1 every 5 epochs
     elif ttype == 2:
-        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=10)  # Cosine annealing
+        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=5)  # Cosine annealing
     elif ttype == 3:
+        optimizer = torch.optim.SGD(model.parameters(), lr=0.0001)
         scheduler = torch.optim.lr_scheduler.CyclicLR(optimizer, base_lr=0.0001, max_lr=0.01)
 
     # Move model to GPU if available
