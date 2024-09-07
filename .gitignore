@@ -2,3 +2,5 @@
 archive.tar.gz
 resnet50_best.pth.tar
 predictions.csv
+/img/
+*.pth
