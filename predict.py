@@ -55,7 +55,7 @@ def main():
         predicted_class_idx = predict_image(model, image_tensor, device)
         predicted_class = classes.split(",")[predicted_class_idx]
         # predicted_class = idx[predicted_class_idx]
-        print(f"The model predicts the image is a: {predicted_class}")
+        print(f"The model predicts the {img_file} image is a: {predicted_class}")
 
 if __name__ == "__main__":
     main()

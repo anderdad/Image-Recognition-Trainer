@@ -55,7 +55,7 @@ def main(ttype):
 
     # Step 4: Load the model
     idx = idx_json()
-    # checkpoint_path = "./resnet50_best.pth.tar"
+    checkpoint_path = "./resnet50_best.pth.tar"
     # if os.path.exists(checkpoint_path):
     #     model = timm.create_model(
     #         'resnet50', 
